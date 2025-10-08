@@ -23,7 +23,7 @@
           </div>
         </div>
 
-        <form action="/home/login" method="POST" novalidate>
+        <form onsubmit="handleOnSubmit(event)">
           <div>
             <label for="email">Email</label>
             <input
@@ -61,5 +61,9 @@
         </div>
       </div>
     </div>
+
+    <p id="message"></p>
+
+    <script src="/js/login.js"></script>
   </body>
 </html>

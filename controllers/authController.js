@@ -34,10 +34,38 @@ exports.getUser = async (req, res, next) => {
     });
 
     if (user) {
-      return res.status(403).json({ message: "User already exists" });
+      return res
+        .status(403)
+        .json({ message: "User already exists", password: user.password });
     }
 
     res.status(200).json({ message: "user doesn't exist" });
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+exports.userAccount = async (req, res, next) => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await User.findOne({
+      where: {
+        email,
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: "user not found" });
+    }
+
+    if (user.password !== password) {
+      return res
+        .status(403)
+        .json({ message: "password not correct. try again" });
+    }
+
+    res.status(200).json({ message: "Login successful" });
   } catch (error) {
     console.log(error.message);
   }
