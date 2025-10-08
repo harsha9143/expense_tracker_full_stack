@@ -5,7 +5,9 @@ const path = require("path");
 const express = require("express");
 
 //custom modules
-const signUpRouter = require("./routes/signUpRouter");
+const authRouter = require("./routes/authRouter");
+const User = require("./models/User");
+const db = require("./utils/databaseUtil");
 
 const app = express();
 
@@ -18,9 +20,17 @@ app.get("/", (req, res, next) => {
   res.send("Welcome to home page");
 });
 
-app.use("/home", signUpRouter);
+app.use("/home", authRouter);
 
 const PORT = 4000;
-app.listen(PORT, () => {
-  console.log(`connection eshtablished successfully http://localhost:${PORT}`);
-});
+db.sync()
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(
+        `connection eshtablished successfully http://localhost:${PORT}`
+      );
+    });
+  })
+  .catch((err) => {
+    console.log("Server connection failed", err.message);
+  });
