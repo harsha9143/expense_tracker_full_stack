@@ -1,4 +1,5 @@
 const path = require("path");
+const bcrypt = require("bcrypt");
 const User = require("../models/User");
 
 exports.signupPage = async (req, res, next) => {
@@ -9,24 +10,6 @@ exports.addUser = async (req, res, next) => {
   const { name, email, password } = req.body;
 
   try {
-    const newUser = await User.create({ name, email, password });
-
-    res
-      .status(201)
-      .json({ message: "User created successfully. please login" });
-  } catch (error) {
-    console.log("error", error.message);
-  }
-};
-
-exports.loginPage = (req, res, next) => {
-  res.sendFile(path.join(__dirname, "../views", "login.html"));
-};
-
-exports.getUser = async (req, res, next) => {
-  const email = req.params.email;
-
-  try {
     const user = await User.findOne({
       where: {
         email,
@@ -34,15 +17,25 @@ exports.getUser = async (req, res, next) => {
     });
 
     if (user) {
-      return res
-        .status(403)
-        .json({ message: "User already exists", password: user.password });
+      return res.status(409).json({ message: "user already exists" });
     }
 
-    res.status(200).json({ message: "user doesn't exist" });
+    bcrypt.hash(password, 10, async (err, result) => {
+      if (err) {
+        return res.status(404).json({ message: "something went wrong!" });
+      }
+      const newUser = await User.create({ name, email, password: result });
+      res
+        .status(201)
+        .json({ message: "User created successfully. please login" });
+    });
   } catch (error) {
-    console.log(error.message);
+    console.log("error", error.message);
   }
+};
+
+exports.loginPage = (req, res, next) => {
+  res.sendFile(path.join(__dirname, "../views", "login.html"));
 };
 
 exports.userAccount = async (req, res, next) => {
@@ -56,16 +49,22 @@ exports.userAccount = async (req, res, next) => {
     });
 
     if (!user) {
-      return res.status(404).json({ message: "user not found" });
+      return res.status(403).json({ message: "user not found" });
     }
 
-    if (user.password !== password) {
-      return res
-        .status(401)
-        .json({ message: "password not correct. try again" });
-    }
+    bcrypt.compare(password, user.password, (err, result) => {
+      if (err) {
+        return res.status(404).json({ message: "something went wrong!!!" });
+      }
 
-    res.status(200).json({ message: "Login successful" });
+      if (!result) {
+        return res
+          .status(401)
+          .json({ message: "Password is incorrect. try again!!!" });
+      }
+
+      res.status(200).json({ message: "login successful" });
+    });
   } catch (error) {
     console.log(error.message);
   }
