@@ -61,7 +61,7 @@ exports.userAccount = async (req, res, next) => {
 
     if (user.password !== password) {
       return res
-        .status(403)
+        .status(401)
         .json({ message: "password not correct. try again" });
     }
 
