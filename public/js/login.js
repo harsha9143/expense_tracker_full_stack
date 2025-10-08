@@ -19,6 +19,7 @@ async function handleOnSubmit(event) {
 
   if (user.status === 200) {
     msg.style.color = "green";
+    window.location.href = "http://localhost:4000/expenses?loggedIn=true";
     return;
   }
 
