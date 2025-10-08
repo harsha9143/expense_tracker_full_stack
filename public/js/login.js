@@ -19,8 +19,13 @@ async function handleOnSubmit(event) {
 
   if (user.status === 200) {
     msg.style.color = "green";
-    window.location.href = "http://localhost:4000/expenses?loggedIn=true";
-    return;
+
+    localStorage.setItem("token", data.token);
+
+    setTimeout(() => {
+      window.location.href = "http://localhost:4000/expenses";
+      return;
+    }, 1000);
   }
 
   msg.style.color = "red";

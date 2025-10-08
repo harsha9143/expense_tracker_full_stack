@@ -1,5 +1,6 @@
 const path = require("path");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
 exports.signupPage = async (req, res, next) => {
@@ -63,7 +64,11 @@ exports.userAccount = async (req, res, next) => {
           .json({ message: "Password is incorrect. try again!!!" });
       }
 
-      res.status(200).json({ message: "login successful" });
+      const token = jwt.sign({ userId: user.id }, "secretKey", {
+        expiresIn: "1h",
+      });
+
+      res.status(200).json({ message: "login successful", token });
     });
   } catch (error) {
     console.log(error.message);

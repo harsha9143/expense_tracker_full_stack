@@ -2,9 +2,6 @@ const path = require("path");
 const Expense = require("../models/expense");
 
 exports.getHomePage = (req, res, next) => {
-  if (!req.query.loggedIn) {
-    return res.status(404).json({ message: "user not logged in" });
-  }
   res.status(200).sendFile(path.join(__dirname, "../views", "expenses.html"));
 };
 
@@ -12,7 +9,12 @@ exports.addExpense = async (req, res, next) => {
   const { price, description, category } = req.body;
 
   try {
-    const addExpense = await Expense.create({ price, description, category });
+    const addExpense = await Expense.create({
+      price,
+      description,
+      category,
+      userId: req.user.userId,
+    });
 
     if (addExpense) {
       return res.status(201).json({ message: "Expense added successfully" });
@@ -26,7 +28,11 @@ exports.addExpense = async (req, res, next) => {
 
 exports.getExpenses = async (req, res) => {
   try {
-    const expenses = await Expense.findAll();
+    const expenses = await Expense.findAll({
+      where: {
+        userId: req.user.userId,
+      },
+    });
 
     if (!expenses) {
       return res.status(404).json({ message: "Cannot fetch items" });
@@ -45,6 +51,7 @@ exports.removeItem = async (req, res) => {
     const delItem = await Expense.destroy({
       where: {
         id,
+        userId: req.user.userId,
       },
     });
 
