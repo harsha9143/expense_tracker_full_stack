@@ -69,9 +69,23 @@ exports.removeItem = async (req, res) => {
   }
 };
 
-exports.getAllUsers = async (req, res) => {
+exports.getUserwiseExpenses = async (req, res) => {
   try {
-    const users = await User.findAll();
+    const users = await User.findAll({
+      attributes: [
+        "id",
+        "name",
+        [fn("SUM", col("expenses.price")), "totalPrice"],
+      ],
+      include: [
+        {
+          model: Expense,
+          attributes: [],
+        },
+      ],
+      group: ["users.id"],
+      order: [[literal("totalPrice"), "DESC"]],
+    });
 
     if (!users) {
       return res.status(400).send("users cannot be fetched");
@@ -80,20 +94,5 @@ exports.getAllUsers = async (req, res) => {
     res.status(200).json(users);
   } catch (error) {
     res.status(400).send("Failed to fecth users");
-  }
-};
-
-exports.getAllExpenses = async (req, res) => {
-  try {
-    const totals = await Expense.findAll({
-      attributes: ["userId", [fn("SUM", col("price")), "totalPrice"]],
-      group: ["userId"],
-      order: [[literal("totalPrice"), "DESC"]],
-    });
-
-    res.status(200).json(totals);
-  } catch (error) {
-    console.log(error.message);
-    res.status(400).json({ message: error.message });
   }
 };

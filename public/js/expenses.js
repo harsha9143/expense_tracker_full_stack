@@ -118,33 +118,20 @@ document.getElementById("leader-board").addEventListener("click", async () => {
   h1.textContent = "Leader Board";
   leaderBoard.appendChild(h1);
 
-  const users = await fetch("http://localhost:4000/expenses/users", {
-    headers: {
-      Authorization: "Bearer " + token,
-    },
-  });
-  const usersData = await users.json();
+  const userwiseExpenses = await fetch(
+    "http://localhost:4000/expenses/leader-board",
+    {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    }
+  );
+  const data = await userwiseExpenses.json();
 
-  const expenses = await fetch("http://localhost:4000/expenses/all-items", {
-    headers: {
-      Authorization: "Bearer " + token,
-    },
-  });
-  const expensesData = await expenses.json();
-
-  console.log(usersData);
-  console.log(expensesData);
-
-  const requiredData = expensesData.map((expense) => {
-    const singleUser = usersData.filter((user) => user.id === expense.userId);
-    const userName = singleUser[0].name;
-    return { name: userName, totalAmount: expense.totalPrice };
-  });
-
-  for (let i = 0; i < requiredData.length; i++) {
+  for (let i = 0; i < data.length; i++) {
     const li = document.createElement("li");
 
-    li.textContent = `Name - ${requiredData[i].name}, totalAmount - ${requiredData[i].totalAmount}`;
+    li.textContent = `Name - ${data[i].name}, totalAmount - ${data[i].totalPrice}`;
     leaderBoard.appendChild(li);
   }
 });

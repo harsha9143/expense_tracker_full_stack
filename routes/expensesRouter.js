@@ -17,12 +17,6 @@ expensesRouter.get(
   expensesController.getExpenses
 );
 
-expensesRouter.get(
-  "/all-items",
-  authenticator.authenticate,
-  expensesController.getAllExpenses
-);
-
 expensesRouter.delete(
   "/remove/:id",
   authenticator.authenticate,
@@ -30,9 +24,9 @@ expensesRouter.delete(
 );
 
 expensesRouter.get(
-  "/users",
+  "/leader-board",
   authenticator.authenticate,
-  expensesController.getAllUsers
+  expensesController.getUserwiseExpenses
 );
 
 module.exports = expensesRouter;
