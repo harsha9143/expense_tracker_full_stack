@@ -109,3 +109,42 @@ async function deleteItem(li, id) {
     msg.style.color = "red";
   }
 }
+
+document.getElementById("leader-board").addEventListener("click", async () => {
+  const token = localStorage.getItem("token");
+
+  const leaderBoard = document.getElementById("leader-board-list");
+  const h1 = document.createElement("h1");
+  h1.textContent = "Leader Board";
+  leaderBoard.appendChild(h1);
+
+  const users = await fetch("http://localhost:4000/expenses/users", {
+    headers: {
+      Authorization: "Bearer " + token,
+    },
+  });
+  const usersData = await users.json();
+
+  const expenses = await fetch("http://localhost:4000/expenses/all-items", {
+    headers: {
+      Authorization: "Bearer " + token,
+    },
+  });
+  const expensesData = await expenses.json();
+
+  console.log(usersData);
+  console.log(expensesData);
+
+  const requiredData = expensesData.map((expense) => {
+    const singleUser = usersData.filter((user) => user.id === expense.userId);
+    const userName = singleUser[0].name;
+    return { name: userName, totalAmount: expense.totalPrice };
+  });
+
+  for (let i = 0; i < requiredData.length; i++) {
+    const li = document.createElement("li");
+
+    li.textContent = `Name - ${requiredData[i].name}, totalAmount - ${requiredData[i].totalAmount}`;
+    leaderBoard.appendChild(li);
+  }
+});

@@ -16,10 +16,23 @@ expensesRouter.get(
   authenticator.authenticate,
   expensesController.getExpenses
 );
+
+expensesRouter.get(
+  "/all-items",
+  authenticator.authenticate,
+  expensesController.getAllExpenses
+);
+
 expensesRouter.delete(
   "/remove/:id",
   authenticator.authenticate,
   expensesController.removeItem
+);
+
+expensesRouter.get(
+  "/users",
+  authenticator.authenticate,
+  expensesController.getAllUsers
 );
 
 module.exports = expensesRouter;

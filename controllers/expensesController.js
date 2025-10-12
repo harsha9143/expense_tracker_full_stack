@@ -1,5 +1,9 @@
 const path = require("path");
+
+const { fn, col, literal } = require("sequelize");
+
 const Expense = require("../models/expense");
+const User = require("../models/User");
 
 exports.getHomePage = (req, res, next) => {
   res.status(200).sendFile(path.join(__dirname, "../views", "expenses.html"));
@@ -62,5 +66,34 @@ exports.removeItem = async (req, res) => {
     res.status(404).json({ message: "item deletion failed" });
   } catch (error) {
     res.status(405).json({ message: "Item cannot be deleted" });
+  }
+};
+
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await User.findAll();
+
+    if (!users) {
+      return res.status(400).send("users cannot be fetched");
+    }
+
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(400).send("Failed to fecth users");
+  }
+};
+
+exports.getAllExpenses = async (req, res) => {
+  try {
+    const totals = await Expense.findAll({
+      attributes: ["userId", [fn("SUM", col("price")), "totalPrice"]],
+      group: ["userId"],
+      order: [[literal("totalPrice"), "DESC"]],
+    });
+
+    res.status(200).json(totals);
+  } catch (error) {
+    console.log(error.message);
+    res.status(400).json({ message: error.message });
   }
 };
