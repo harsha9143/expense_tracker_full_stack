@@ -75,10 +75,12 @@ function display(ul, data) {
 
   const del = document.createElement("button");
   del.textContent = "Delete";
+  del.style.margin = "0px 10px";
 
   li.appendChild(del);
 
   li.style.display = "flex";
+  li.style.margin = "10px 0px";
 
   ul.appendChild(li);
 

@@ -26,7 +26,7 @@ async function handleOnSubmit(event) {
       window.location.href = "http://localhost:4000/expenses";
       return;
     }, 1000);
+  } else {
+    msg.style.color = "red";
   }
-
-  msg.style.color = "red";
 }

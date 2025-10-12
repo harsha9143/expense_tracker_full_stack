@@ -3,6 +3,7 @@ const path = require("path");
 
 //third-party modules
 const express = require("express");
+const cors = require("cors");
 
 //custom modules
 const authRouter = require("./routes/authRouter");
@@ -11,12 +12,15 @@ const db = require("./utils/databaseUtil");
 const expensesRouter = require("./routes/expensesRouter");
 const Expense = require("./models/expense");
 const { authenticate } = require("./middleware/authenticate");
+const Payment = require("./models/payment");
+const paymentRouter = require("./routes/PaymentRouter");
 
 User.hasMany(Expense);
 Expense.belongsTo(User);
 
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.static(path.join(__dirname, "public")));
@@ -28,6 +32,7 @@ app.get("/", (req, res, next) => {
 
 app.use("/home", authRouter);
 app.use("/expenses", expensesRouter);
+app.use("/payments", paymentRouter);
 
 app.get("/verify-token", authenticate, (req, res) => {
   res.status(200).json({ message: "Token valid" });
