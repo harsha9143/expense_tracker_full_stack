@@ -3,7 +3,7 @@ const path = require("path");
 const { fn, col, literal } = require("sequelize");
 
 const Expense = require("../models/expense");
-const User = require("../models/User");
+const User = require("../models/user");
 
 exports.getHomePage = (req, res, next) => {
   res.status(200).sendFile(path.join(__dirname, "../views", "expenses.html"));
@@ -19,6 +19,12 @@ exports.addExpense = async (req, res, next) => {
       category,
       userId: req.user.userId,
     });
+
+    const user = await User.findByPk(req.user.userId);
+
+    user.totalExpenses = Number(user.totalExpenses) + Number(price);
+
+    await user.save();
 
     if (addExpense) {
       return res.status(201).json({ message: "Expense added successfully" });

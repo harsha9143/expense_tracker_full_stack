@@ -7,7 +7,7 @@ const cors = require("cors");
 
 //custom modules
 const authRouter = require("./routes/authRouter");
-const User = require("./models/User");
+const User = require("./models/user");
 const db = require("./utils/databaseUtil");
 const expensesRouter = require("./routes/expensesRouter");
 const Expense = require("./models/expense");
