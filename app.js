@@ -14,6 +14,7 @@ const Expense = require("./models/expense");
 const { authenticate } = require("./middleware/authenticate");
 const Payment = require("./models/payment");
 const paymentRouter = require("./routes/PaymentRouter");
+const genAiRouter = require("./routes/genAiRouter");
 
 User.hasMany(Expense);
 Expense.belongsTo(User);
@@ -33,6 +34,7 @@ app.get("/", (req, res, next) => {
 app.use("/home", authRouter);
 app.use("/expenses", expensesRouter);
 app.use("/payments", paymentRouter);
+app.use("/search", genAiRouter);
 
 app.get("/verify-token", authenticate, (req, res) => {
   res.status(200).json({ message: "Token valid" });

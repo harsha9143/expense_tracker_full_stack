@@ -1,7 +1,7 @@
 const path = require("path");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const User = require("../models/User");
+const User = require("../models/user");
 
 exports.signupPage = async (req, res, next) => {
   res.sendFile(path.join(__dirname, "../views", "signUp.html"));

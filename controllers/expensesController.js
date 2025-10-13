@@ -4,6 +4,7 @@ const { fn, col, literal } = require("sequelize");
 
 const Expense = require("../models/expense");
 const User = require("../models/user");
+const sequelize = require("../utils/databaseUtil");
 
 exports.getHomePage = (req, res, next) => {
   res.status(200).sendFile(path.join(__dirname, "../views", "expenses.html"));
@@ -11,27 +12,35 @@ exports.getHomePage = (req, res, next) => {
 
 exports.addExpense = async (req, res, next) => {
   const { price, description, category } = req.body;
+  const transaction = await sequelize.transaction();
 
   try {
-    const addExpense = await Expense.create({
-      price,
-      description,
-      category,
-      userId: req.user.userId,
-    });
+    const addExpense = await Expense.create(
+      {
+        price,
+        description,
+        category,
+        userId: req.user.userId,
+      },
+      { transaction }
+    );
 
-    const user = await User.findByPk(req.user.userId);
+    await User.increment(
+      {
+        totalExpenses: price,
+      },
+      {
+        where: {
+          id: req.user.userId,
+        },
+        transaction,
+      }
+    );
+    await transaction.commit();
 
-    user.totalExpenses = Number(user.totalExpenses) + Number(price);
-
-    await user.save();
-
-    if (addExpense) {
-      return res.status(201).json({ message: "Expense added successfully" });
-    }
-
-    res.status(401).json({ message: "expense not added" });
+    res.status(201).json({ message: "Expense added successfully" });
   } catch (error) {
+    await transaction.rollback();
     console.log(error.message);
   }
 };
@@ -56,14 +65,31 @@ exports.getExpenses = async (req, res) => {
 
 exports.removeItem = async (req, res) => {
   const id = req.params.id;
+  const transaction = await sequelize.transaction();
 
   try {
-    const delItem = await Expense.destroy({
+    const delItem = await Expense.findOne({
       where: {
         id,
         userId: req.user.userId,
       },
     });
+
+    const price = delItem.price;
+    await delItem.destroy({ transaction });
+
+    await User.decrement(
+      {
+        totalExpenses: price,
+      },
+      {
+        where: {
+          id: req.user.userId,
+        },
+      }
+    );
+
+    await transaction.commit();
 
     if (delItem) {
       return res.status(200).json({ message: "item deleted successfully" });
@@ -71,6 +97,7 @@ exports.removeItem = async (req, res) => {
 
     res.status(404).json({ message: "item deletion failed" });
   } catch (error) {
+    await transaction.rollback();
     res.status(405).json({ message: "Item cannot be deleted" });
   }
 };
@@ -100,5 +127,17 @@ exports.getUserwiseExpenses = async (req, res) => {
     res.status(200).json(users);
   } catch (error) {
     res.status(400).send("Failed to fecth users");
+  }
+};
+
+exports.getUserType = async (req, res) => {
+  try {
+    const userType = await User.findByPk(req.user.userId, {
+      attributes: ["isPremiumUser"],
+    });
+
+    res.status(200).json(userType);
+  } catch (error) {
+    console.log(error.message);
   }
 };

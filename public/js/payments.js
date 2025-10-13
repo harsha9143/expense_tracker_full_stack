@@ -1,10 +1,15 @@
 const cashfree = Cashfree({
   mode: "sandbox",
 });
+
+const token = localStorage.getItem("token");
 document.getElementById("renderBtn").addEventListener("click", async () => {
   try {
     const response = await fetch("http://localhost:4000/payments/pay", {
       method: "POST",
+      headers: {
+        Authorization: "Bearer " + token,
+      },
     });
 
     const data = await response.json();

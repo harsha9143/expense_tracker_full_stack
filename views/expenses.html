@@ -11,14 +11,6 @@
       <input type="number" name="price" id="price" /><br /><br />
       <label for="description">Description</label><br />
       <input type="text" name="description" id="description" /><br /><br />
-      <label for="category">Category</label>
-      <select name="category" id="category">
-        <option value="food">Food</option>
-        <option value="fuel">Fuel</option>
-        <option value="books">Books</option>
-        <option value="movie">Movie</option></select
-      ><br /><br />
-
       <button type="submit">Add Expense</button>
     </form>
 
@@ -32,11 +24,11 @@
 
     <p id="del-msg"></p>
 
-    <a href="/payments">Get Premium</a>
+    <a href="/payments" style="display: none">Get Premium</a>
     <br /><br />
 
-    <button id="leader-board">Show Leaderboard</button>
-    <ul id="leader-board-list"></ul>
+    <button id="leader-board" style="display: none">Show Leaderboard</button>
+    <ul id="leader-board-list" style="display: none"></ul>
 
     <script src="/js/expenses.js"></script>
   </body>

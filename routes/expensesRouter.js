@@ -29,4 +29,10 @@ expensesRouter.get(
   expensesController.getUserwiseExpenses
 );
 
+expensesRouter.get(
+  "/user-type",
+  authenticator.authenticate,
+  expensesController.getUserType
+);
+
 module.exports = expensesRouter;
