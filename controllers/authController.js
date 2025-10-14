@@ -1,8 +1,10 @@
 const path = require("path");
 const bcrypt = require("bcrypt");
+const { v4 } = require("uuid");
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 const { passwordResetUtil } = require("../utils/resetPasswordUtil");
+const ForgotPassword = require("../models/forgotPasswordRequests");
 
 exports.signupPage = async (req, res, next) => {
   res.sendFile(path.join(__dirname, "../views", "signUp.html"));
@@ -94,7 +96,11 @@ exports.resetPassword = async (req, res) => {
       return res.status(400).json({ message: "User does not exist" });
     }
 
-    const trans = await passwordResetUtil(user.name, user.email);
+    const uuid = v4();
+
+    await ForgotPassword.create({ id: uuid, userId: user.id, isActive: "YES" });
+
+    const trans = await passwordResetUtil(uuid, user.name, user.email);
 
     if (trans) {
       res
@@ -103,5 +109,54 @@ exports.resetPassword = async (req, res) => {
     }
   } catch (error) {
     res.status(500).json({ message: "password cannot be reset!!! Try again" });
+  }
+};
+
+exports.newPasswordPage2 = (req, res) => {
+  res.sendFile(path.join(__dirname, "../views", "setPassword.html"));
+};
+
+exports.newPasswordPage = async (req, res) => {
+  const request = await ForgotPassword.findByPk(req.params.uuid);
+
+  if (!request) {
+    return res.status(404).send("Request not found");
+  }
+
+  if (!request.isActive) {
+    return res.status(419).send("Link expired! try to reset password again");
+  }
+
+  res.redirect(`/home/reset-password-page?uuid=${req.params.uuid}`);
+};
+
+exports.setNewPassword = async (req, res) => {
+  const { password, uuid } = req.body;
+  try {
+    const request = await ForgotPassword.findByPk(uuid);
+
+    if (!request || !request.isActive) {
+      return res.status(400).send("Invalid or expired reset link");
+    }
+
+    console.log(password);
+
+    const user = await User.findByPk(request.userId);
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    console.log(hashedPassword);
+    console.log(user.password);
+
+    user.password = hashedPassword;
+    await user.save();
+
+    request.isActive = "NO";
+    await request.save();
+
+    res.status(200).json({ message: "Password reset successful" });
+  } catch (error) {
+    console.log(error.message);
+    res.status(400).json({ message: "Password reset failed" });
   }
 };

@@ -1,7 +1,7 @@
 const sib = require("sib-api-v3-sdk");
 require("dotenv").config();
 
-exports.passwordResetUtil = async (name, email) => {
+exports.passwordResetUtil = async (uuid, name, email) => {
   try {
     const client = sib.ApiClient.instance;
     const apiKey = client.authentications["api-key"];
@@ -10,7 +10,7 @@ exports.passwordResetUtil = async (name, email) => {
     const tranEmailApi = new sib.TransactionalEmailsApi();
 
     const sender = {
-      email: "harshaharshini10@yahoo.com",
+      email: "harshavardhan9143@gmail.com",
     };
 
     const reciever = [
@@ -26,7 +26,7 @@ exports.passwordResetUtil = async (name, email) => {
       textContent: "Click on the link to reset your password",
       htmlContent: `<h2>Hello ${name},</h2>
         <p>Click the button below to reset your password:</p>
-        <a href="http://localhost:4000/home/reset-password" 
+        <a href="http://localhost:4000/home/password-reset/${uuid}" 
            style="display:inline-block;padding:10px 15px;background:#007bff;color:white;text-decoration:none;border-radius:5px;">
           Reset Password
         </a>`,

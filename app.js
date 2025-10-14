@@ -15,9 +15,13 @@ const { authenticate } = require("./middleware/authenticate");
 const Payment = require("./models/payment");
 const paymentRouter = require("./routes/PaymentRouter");
 const genAiRouter = require("./routes/genAiRouter");
+const ForgotPassword = require("./models/forgotPasswordRequests");
 
 User.hasMany(Expense);
 Expense.belongsTo(User);
+
+User.hasMany(ForgotPassword);
+ForgotPassword.belongsTo(User);
 
 const app = express();
 
