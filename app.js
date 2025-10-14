@@ -49,7 +49,7 @@ db.sync()
   .then(() => {
     app.listen(PORT, () => {
       console.log(
-        `connection eshtablished successfully http://localhost:${PORT}`
+        `connection eshtablished successfully http://localhost:${PORT}/home/login`
       );
     });
   })
