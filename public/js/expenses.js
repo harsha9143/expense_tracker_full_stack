@@ -22,7 +22,7 @@ async function initialize() {
     return;
   }
 
-  const ul = document.getElementById("expenses-list");
+  const table = document.getElementById("expenses-list");
 
   const expensesJson = await fetch(`http://localhost:4000/expenses/items`, {
     headers: {
@@ -32,7 +32,8 @@ async function initialize() {
   const expenses = await expensesJson.json();
 
   for (let i = 0; i < expenses.length; i++) {
-    display(ul, expenses[i]);
+    console.log(expenses[i]);
+    display(table, expenses[i]);
   }
 
   const userType = await fetch(`http://localhost:4000/expenses/user-type`, {
@@ -104,20 +105,25 @@ async function handleOnSubmit(event) {
 }
 
 function display(ul, data) {
-  const li = document.createElement("li");
+  const tr = document.createElement("tr");
 
-  li.textContent = `${data.price} - ${data.description} - ${data.category} - `;
+  tr.innerHTML = `
+                <td>${new Date(data.createdAt).toLocaleDateString("en-IN")}</td>
+                <td>${data.description}</td>
+                <td>${data.price}</td>
+                <td>${data.category}</td>
+            `;
 
   const del = document.createElement("button");
   del.textContent = "Delete";
   del.style.margin = "0px 10px";
 
-  li.appendChild(del);
+  const td = document.createElement("td");
+  td.appendChild(del);
 
-  li.style.display = "flex";
-  li.style.margin = "10px 0px";
+  tr.appendChild(td);
 
-  ul.appendChild(li);
+  ul.appendChild(tr);
 
   del.addEventListener("click", () => deleteItem(li, data.id));
 }
@@ -149,10 +155,10 @@ async function showLeaderBoard() {
   const token = localStorage.getItem("token");
 
   const leaderBoard = document.getElementById("leader-board-list");
-  leaderBoard.style.display = "inline";
-  const h1 = document.createElement("h1");
-  h1.textContent = "Leader Board";
-  leaderBoard.appendChild(h1);
+  const table = document.getElementById("leader-board-table");
+  table.style.display = "inline";
+  const h1 = document.getElementById("heading");
+  h1.style.display = "inline";
 
   const userwiseExpenses = await fetch(
     "http://localhost:4000/expenses/leader-board",
@@ -165,9 +171,11 @@ async function showLeaderBoard() {
   const data = await userwiseExpenses.json();
 
   for (let i = 0; i < data.length; i++) {
-    const li = document.createElement("li");
+    const tr = document.createElement("tr");
 
-    li.textContent = `Name - ${data[i].name}, totalAmount - ${data[i].totalPrice}`;
-    leaderBoard.appendChild(li);
+    tr.innerHTML = `<td>${i + 1}</td>
+    <td>${data[i].name}</td>
+    <td>${data[i].totalPrice}</td>`;
+    leaderBoard.appendChild(tr);
   }
 }

@@ -4,6 +4,45 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Expenses</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <style>
+      th,
+      td {
+        border: 2px solid #444; /* gives a strong visible border */
+        padding: 10px;
+        text-align: left;
+      }
+
+      th {
+        background-color: #f4f4f4;
+      }
+
+      tr:hover {
+        background-color: #f1f1f1;
+      }
+
+      #downloadBtn {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        padding: 12px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        transition: background-color 0.3s ease;
+      }
+
+      #downloadBtn:hover {
+        background-color: #0056b3;
+      }
+    </style>
   </head>
   <body>
     <form onsubmit="handleOnSubmit(event)">
@@ -19,16 +58,48 @@
 
     <hr />
 
-    <h1>Here is the list of expenses</h1>
-    <ul id="expenses-list"></ul>
+    <h1>Expenses List</h1>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Item</th>
+          <th>Price (₹)</th>
+          <th>Category</th>
+          <th>action</th>
+        </tr>
+      </thead>
+      <tbody id="expenses-list">
+        <!-- Expenses will be populated here dynamically -->
+      </tbody>
+    </table>
 
     <p id="del-msg"></p>
 
     <a href="/payments" style="display: none">Get Premium</a>
     <br /><br />
 
-    <button id="leader-board" style="display: none">Show Leaderboard</button>
-    <ul id="leader-board-list" style="display: none"></ul>
+    <button id="leader-board" style="display: none">Show Leaderboard</button
+    ><br /><br />
+    <h1 id="heading" style="display: none">Leader Board</h1>
+    <br />
+    <table id="leader-board-table" style="display: none">
+      <thead>
+        <tr>
+          <th>No</th>
+          <th>Name</th>
+          <th>Total Expenses (₹)</th>
+        </tr>
+      </thead>
+      <tbody id="leader-board-list">
+        <!-- Expenses will be populated here dynamically -->
+      </tbody>
+    </table>
+
+    <button id="downloadBtn">
+      <i class="fa-solid fa-download"></i>
+    </button>
 
     <script src="/js/expenses.js"></script>
   </body>

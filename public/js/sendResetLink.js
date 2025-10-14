@@ -3,8 +3,6 @@ async function handleOnSubmit(event) {
 
   const email = event.target.email.value;
 
-  console.log("From submitted");
-
   const resetMsg = await fetch("http://localhost:4000/home/reset-password", {
     method: "POST",
     headers: {
