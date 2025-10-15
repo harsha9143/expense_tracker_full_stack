@@ -47,17 +47,34 @@ exports.addExpense = async (req, res, next) => {
 
 exports.getExpenses = async (req, res) => {
   try {
-    const expenses = await Expense.findAll({
+    const page = +req.query.page || 1;
+    const limit = +req.query.limit || 5;
+    const offset = (page - 1) * limit;
+
+    const { count, rows: expenses } = await Expense.findAndCountAll({
       where: {
         userId: req.user.userId,
       },
+      limit,
+      offset,
+      order: [["createdAt", "DESC"]],
     });
 
     if (!expenses) {
       return res.status(404).json({ message: "Cannot fetch items" });
     }
 
-    res.status(200).json(expenses);
+    res.status(200).json({
+      expenses,
+      pagination: {
+        currentPage: page,
+        hasNextPage: limit * page < count,
+        hasPreviousPage: page > 1,
+        nextPage: page + 1,
+        previousPage: page - 1,
+        lastPage: Math.ceil(count / limit),
+      },
+    });
   } catch (error) {
     console.log(error.message);
   }

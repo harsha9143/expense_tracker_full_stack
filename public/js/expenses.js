@@ -1,6 +1,6 @@
-document.addEventListener("DOMContentLoaded", initialize);
+window.addEventListener("DOMContentLoaded", initialize);
 
-async function initialize() {
+async function initialize(page = 1, limit = 5) {
   const token = localStorage.getItem("token");
 
   if (!token) {
@@ -24,17 +24,24 @@ async function initialize() {
 
   const table = document.getElementById("expenses-list");
 
-  const expensesJson = await fetch(`http://localhost:4000/expenses/items`, {
-    headers: {
-      Authorization: "Bearer " + token,
-    },
-  });
-  const expenses = await expensesJson.json();
+  const expensesJson = await fetch(
+    `http://localhost:4000/expenses/items?page=${page}&limit=${limit}`,
+    {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    }
+  );
+  const data = await expensesJson.json();
+  const expenses = data.expenses || [];
+  const paginationData = data.pagination || {};
 
+  table.innerHTML = "";
   for (let i = 0; i < expenses.length; i++) {
-    console.log(expenses[i]);
     display(table, expenses[i]);
   }
+
+  showPagination(paginationData);
 
   const userType = await fetch(`http://localhost:4000/expenses/user-type`, {
     headers: {
@@ -125,7 +132,7 @@ function display(ul, data) {
 
   ul.appendChild(tr);
 
-  del.addEventListener("click", () => deleteItem(li, data.id));
+  del.addEventListener("click", () => deleteItem(tr, data.id));
 }
 
 async function deleteItem(li, id) {
@@ -177,5 +184,36 @@ async function showLeaderBoard() {
     <td>${data[i].name}</td>
     <td>${data[i].totalPrice}</td>`;
     leaderBoard.appendChild(tr);
+  }
+}
+
+function showPagination({
+  currentPage,
+  hasNextPage,
+  hasPreviousPage,
+  nextPage,
+  previousPage,
+  lastPage,
+}) {
+  const pagination = document.getElementById("pagination");
+  pagination.innerHTML = "";
+
+  if (hasPreviousPage) {
+    const prevBtn = document.createElement("button");
+    prevBtn.textContent = "Previous";
+    prevBtn.addEventListener("click", () => initialize(previousPage));
+    pagination.appendChild(prevBtn);
+  }
+
+  const pageInfo = document.createElement("span");
+  pageInfo.textContent = ` Page ${currentPage} of ${lastPage} `;
+  pageInfo.style.margin = "0 10px";
+  pagination.appendChild(pageInfo);
+
+  if (hasNextPage) {
+    const nextBtn = document.createElement("button");
+    nextBtn.textContent = "Next";
+    nextBtn.addEventListener("click", () => initialize(nextPage));
+    pagination.appendChild(nextBtn);
   }
 }
