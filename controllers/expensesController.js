@@ -21,6 +21,7 @@ exports.addExpense = async (req, res, next) => {
         description,
         category,
         userId: req.user.userId,
+        comment: "Added after using migrations",
       },
       { transaction }
     );

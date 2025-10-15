@@ -1,0 +1,23 @@
+{
+  "development": {
+    "username": "root",
+    "password": "vm4udte@W",
+    "database": "expense_tracker_fullstack",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "test": {
+    "username": "root",
+    "password": "vm4udte@W",
+    "database": "expense_tracker_fullstack",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "root",
+    "password": "vm4udte@W",
+    "database": "expense_tracker_fullstack",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  }
+}
