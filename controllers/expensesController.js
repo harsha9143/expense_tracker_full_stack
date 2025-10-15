@@ -63,6 +63,7 @@ exports.getExpenses = async (req, res) => {
     if (!expenses) {
       return res.status(404).json({ message: "Cannot fetch items" });
     }
+    const totalPages = Math.ceil(count / limit);
 
     res.status(200).json({
       expenses,
@@ -72,7 +73,7 @@ exports.getExpenses = async (req, res) => {
         hasPreviousPage: page > 1,
         nextPage: page + 1,
         previousPage: page - 1,
-        lastPage: Math.ceil(count / limit),
+        lastPage: Math.ceil(count / limit), // frontend uses lastPage
       },
     });
   } catch (error) {

@@ -1,5 +1,11 @@
 window.addEventListener("DOMContentLoaded", initialize);
 
+document
+  .getElementById("limit-select")
+  .addEventListener("change", () =>
+    initialize(1, document.getElementById("limit-select").value)
+  );
+
 async function initialize(page = 1, limit = 5) {
   const token = localStorage.getItem("token");
 
@@ -136,8 +142,6 @@ function display(ul, data) {
 }
 
 async function deleteItem(li, id) {
-  li.remove();
-
   const token = localStorage.getItem("token");
 
   const delItem = await fetch(`http://localhost:4000/expenses/remove/${id}`, {
@@ -146,6 +150,8 @@ async function deleteItem(li, id) {
       Authorization: "Bearer " + token,
     },
   });
+
+  li.remove();
   const delmsg = await delItem.json();
 
   const msg = document.getElementById("del-msg");
@@ -201,7 +207,9 @@ function showPagination({
   if (hasPreviousPage) {
     const prevBtn = document.createElement("button");
     prevBtn.textContent = "Previous";
-    prevBtn.addEventListener("click", () => initialize(previousPage));
+    prevBtn.addEventListener("click", () =>
+      initialize(previousPage, document.getElementById("limit-select").value)
+    );
     pagination.appendChild(prevBtn);
   }
 
@@ -213,7 +221,9 @@ function showPagination({
   if (hasNextPage) {
     const nextBtn = document.createElement("button");
     nextBtn.textContent = "Next";
-    nextBtn.addEventListener("click", () => initialize(nextPage));
+    nextBtn.addEventListener("click", () =>
+      initialize(nextPage, document.getElementById("limit-select").value)
+    );
     pagination.appendChild(nextBtn);
   }
 }
