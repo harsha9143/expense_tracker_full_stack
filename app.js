@@ -1,9 +1,13 @@
 //local modules
 const path = require("path");
+const fs = require("fs");
 
 //third-party modules
 const express = require("express");
 const cors = require("cors");
+const helmet = require("helmet");
+const compression = require("compression");
+const morgan = require("morgan");
 
 //custom modules
 const authRouter = require("./routes/authRouter");
@@ -25,6 +29,14 @@ ForgotPassword.belongsTo(User);
 
 const app = express();
 
+const accessLogStream = fs.createWriteStream(
+  path.join(__dirname, "access.log"),
+  { flags: "a" }
+);
+
+app.use(helmet());
+app.use(compression());
+app.use(morgan("combined", { stream: accessLogStream }));
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -48,12 +60,11 @@ app.use((req, res, next) => {
   res.status(404).send("<h1>404 - Page not Found</h1>");
 });
 
-const PORT = 4000;
 db.sync()
   .then(() => {
-    app.listen(PORT, () => {
+    app.listen(process.env.PORT, () => {
       console.log(
-        `connection eshtablished successfully http://localhost:${PORT}/home/login`
+        `connection eshtablished successfully http://localhost:${process.env.PORT}/home/login`
       );
     });
   })

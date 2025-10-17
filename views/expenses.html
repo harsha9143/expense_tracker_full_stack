@@ -8,66 +8,51 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
     />
-    <style>
-      th,
-      td {
-        border: 2px solid #444; /* gives a strong visible border */
-        padding: 10px;
-        text-align: left;
-      }
-
-      th {
-        background-color: #f4f4f4;
-      }
-
-      tr:hover {
-        background-color: #f1f1f1;
-      }
-
-      #downloadBtn {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        background-color: #007bff;
-        color: white;
-        border: none;
-        border-radius: 50%;
-        padding: 12px 20px;
-        font-size: 16px;
-        cursor: pointer;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        transition: background-color 0.3s ease;
-      }
-
-      #downloadBtn:hover {
-        background-color: #0056b3;
-      }
-    </style>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/style.css" />
   </head>
   <body>
     <form onsubmit="handleOnSubmit(event)">
-      <label for="price">Price</label><br />
-      <input type="number" name="price" id="price" /><br /><br />
-      <label for="description">Description</label><br />
-      <input type="text" name="description" id="description" /><br /><br />
-      <button type="submit">Add Expense</button>
+      <h2 style="text-align: center; color: #007bff">Add New Expense</h2>
+      <label for="price">Price</label>
+      <input
+        type="number"
+        name="price"
+        id="price"
+        placeholder="Enter amount (₹)"
+      />
+
+      <label for="description">Description</label>
+      <input
+        type="text"
+        name="description"
+        id="description"
+        placeholder="e.g. Lunch, Transport..."
+      />
+
+      <button type="submit">
+        <i class="fa-solid fa-plus"></i> Add Expense
+      </button>
     </form>
 
     <p id="message"></p>
-    <br /><br />
-
-    <hr />
 
     <h1>Expenses List</h1>
 
-    <select name="limit" id="limit-select">
-      <option value="1">1</option>
-      <option value="2">2</option>
-      <option value="3">3</option>
-      <option value="4">4</option>
-      <option value="5" selected>5</option>
-      <option value="6">6</option>
-    </select>
+    <div style="text-align: center">
+      <label for="limit-select">Items per page:</label>
+      <select name="limit-select" id="limit-select">
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5" selected>5</option>
+        <option value="6">6</option>
+      </select>
+    </div>
 
     <table>
       <thead>
@@ -76,38 +61,37 @@
           <th>Item</th>
           <th>Price (₹)</th>
           <th>Category</th>
-          <th>action</th>
+          <th>Action</th>
         </tr>
       </thead>
-      <tbody id="expenses-list">
-        <!-- Expenses will be populated here dynamically -->
-      </tbody>
+      <tbody id="expenses-list"></tbody>
     </table>
-    <div id="pagination" style="margin-top: 20px; text-align: center"></div>
+
+    <div id="pagination"></div>
 
     <p id="del-msg"></p>
 
     <a href="/payments" style="display: none">Get Premium</a>
     <br /><br />
 
-    <button id="leader-board" style="display: none">Show Leaderboard</button
-    ><br /><br />
-    <h1 id="heading" style="display: none">Leader Board</h1>
-    <br />
-    <table id="leader-board-table" style="display: none">
-      <thead>
-        <tr>
-          <th>No</th>
-          <th>Name</th>
-          <th>Total Expenses (₹)</th>
-        </tr>
-      </thead>
-      <tbody id="leader-board-list">
-        <!-- Expenses will be populated here dynamically -->
-      </tbody>
-    </table>
+    <div>
+      <button id="leader-board">Show Leaderboard</button><br /><br />
+      <h1 id="heading" style="display: none">Leader Board</h1>
+      <br />
 
-    <button id="downloadBtn">
+      <table id="leader-board-table" style="display: none">
+        <thead>
+          <tr>
+            <th>No</th>
+            <th>Name</th>
+            <th>Total Expenses (₹)</th>
+          </tr>
+        </thead>
+        <tbody id="leader-board-list"></tbody>
+      </table>
+    </div>
+
+    <button id="downloadBtn" title="Download Report">
       <i class="fa-solid fa-download"></i>
     </button>
 

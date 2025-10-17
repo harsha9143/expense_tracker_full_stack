@@ -44,7 +44,7 @@ async function initialize(page = 1, limit = 5) {
 
   table.innerHTML = "";
   for (let i = 0; i < expenses.length; i++) {
-    display(table, expenses[i]);
+    display(table, expenses[i], page, limit);
   }
 
   showPagination(paginationData);
@@ -117,7 +117,7 @@ async function handleOnSubmit(event) {
   location.reload();
 }
 
-function display(ul, data) {
+function display(ul, data, page, limit) {
   const tr = document.createElement("tr");
 
   tr.innerHTML = `
@@ -138,20 +138,24 @@ function display(ul, data) {
 
   ul.appendChild(tr);
 
-  del.addEventListener("click", () => deleteItem(tr, data.id));
+  del.addEventListener("click", () => deleteItem(tr, data.id, page, limit));
 }
 
-async function deleteItem(li, id) {
+async function deleteItem(li, id, page, limit) {
   const token = localStorage.getItem("token");
 
-  const delItem = await fetch(`http://localhost:4000/expenses/remove/${id}`, {
-    method: "DELETE",
-    headers: {
-      Authorization: "Bearer " + token,
-    },
-  });
+  const delItem = await fetch(
+    `http://localhost:4000/expenses/remove/${id}?page=${page}`,
+    {
+      method: "DELETE",
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    }
+  );
 
   li.remove();
+  initialize(page, limit);
   const delmsg = await delItem.json();
 
   const msg = document.getElementById("del-msg");
